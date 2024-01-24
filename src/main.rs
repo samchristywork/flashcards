@@ -3,10 +3,18 @@ use rustyline::DefaultEditor;
 use std::fs::File;
 use std::io::prelude::*;
 
+const SHADE: u8 = 150;
+
 struct Flashcard {
     category: String,
     front: String,
     back: String,
+}
+
+struct LogEntry {
+    date: String,
+    result: String,
+    card: Flashcard,
 }
 
 fn color_reset() -> String {
@@ -52,6 +60,57 @@ fn color(r: u8, g: u8, b: u8) -> String {
 
 fn get_max_length(cards: &[&Flashcard], f: fn(&Flashcard) -> &str) -> usize {
     cards.iter().map(|card| f(card).len()).max().unwrap_or(0)
+}
+
+fn print_header(category_len: usize, front_len: usize) {
+    println!(
+        "{}  {}  {}",
+        fixed_width("Category".to_string(), category_len),
+        fixed_width("Front".to_string(), front_len),
+        "Back",
+    );
+}
+
+fn print_card(
+    card: &Flashcard,
+    category_len: usize,
+    front_len: usize,
+    category_color: &str,
+    front_color: &str,
+    back_color: &str,
+) {
+    println!(
+        "{}{}  {}{}  {}{}{}",
+        category_color,
+        fixed_width(card.category.to_string(), category_len),
+        front_color,
+        fixed_width(card.front.to_string(), front_len),
+        back_color,
+        card.back,
+        color_reset()
+    );
+}
+
+fn show_cards(cards: Vec<&Flashcard>) {
+    let max_category_len = get_max_length(&cards, |card| &card.category);
+    let max_front_len = get_max_length(&cards, |card| &card.front);
+
+    let category_color = color(SHADE, 255, 255);
+    let front_color = color(255, SHADE, 255);
+    let back_color = color(255, 255, SHADE);
+
+    print_header(max_category_len, max_front_len);
+
+    for card in cards {
+        print_card(
+            card,
+            max_category_len,
+            max_front_len,
+            &category_color,
+            &front_color,
+            &back_color,
+        );
+    }
 }
 
 fn main() {
