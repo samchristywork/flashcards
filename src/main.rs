@@ -139,6 +139,52 @@ fn grade_answer(guess: &str, answer: &str) -> bool {
     response.trim() == "y"
 }
 
+fn pick_random_card(cards: Vec<&Flashcard>, num: usize) -> Vec<&Flashcard> {
+    let mut rng = rand::thread_rng();
+    let mut picked = Vec::new();
+    for _ in 0..num {
+        let card = cards.choose(&mut rng).unwrap();
+        picked.push(*card);
+    }
+    picked
+}
+
+fn append_to_file(filename: &str, line: String) {
+    let mut file = std::fs::OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open(filename)
+        .expect("Can't open file");
+    file.write_all(line.as_bytes())
+        .expect("Can't write to file");
+}
+
+fn mark_correct(card: &Flashcard, filename: &str) {
+    let date = chrono::Local::now().format("%Y-%m-%d %H:%M:%S");
+
+    let line = format!(
+        "{}	{}	{}	{}	{}\n",
+        date, "correct", card.category, card.front, card.back,
+    );
+
+    append_to_file(filename, line);
+}
+
+fn mark_incorrect(card: &Flashcard, filename: &str) {
+    let date = chrono::Local::now().format("%Y-%m-%d %H:%M:%S");
+
+    let line = format!(
+        "{}	{}	{}	{}	{}\n",
+        date, "incorrect", card.category, card.front, card.back
+    );
+
+    append_to_file(filename, line);
+}
+
+fn display_flashcard(card: &Flashcard) {
+    println!("{}: {}", card.category, card.front);
+}
+
 fn main() {
     let cards_file = "/home/sam/.flashcard.cards";
 
