@@ -185,6 +185,50 @@ fn display_flashcard(card: &Flashcard) {
     println!("{}: {}", card.category, card.front);
 }
 
+fn get_guess() -> String {
+    let mut rl = DefaultEditor::new().unwrap();
+    let readline = rl.readline(">> ");
+    match readline {
+        Ok(line) => line,
+        Err(err) => err.to_string(),
+    }
+}
+
+fn evaluate_guess(guess: String, card: &Flashcard) -> bool {
+    let is_correct = grade_answer(guess.trim(), &card.back);
+    is_correct
+}
+
+fn update_scorecard(card: &Flashcard, is_correct: bool, filename: &str) {
+    if is_correct {
+        mark_correct(&card, filename);
+    } else {
+        mark_incorrect(&card, filename);
+    }
+}
+
+fn print_results(correct: usize, incorrect: usize) {
+    println!("Correct: {}, Incorrect: {}", correct, incorrect);
+}
+
+fn administer_quiz(cards: Vec<&Flashcard>, filename: &str) {
+    let num = ask_how_many_cards();
+    let mut correct = 0;
+    let mut incorrect = 0;
+    for card in pick_random_card(cards, num) {
+        display_flashcard(&card);
+        let guess = get_guess();
+        let is_correct = evaluate_guess(guess, &card);
+        update_scorecard(&card, is_correct, filename);
+        if is_correct {
+            correct += 1;
+        } else {
+            incorrect += 1;
+        }
+    }
+    print_results(correct, incorrect);
+}
+
 fn main() {
     let cards_file = "/home/sam/.flashcard.cards";
 
