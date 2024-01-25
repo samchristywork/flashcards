@@ -113,6 +113,32 @@ fn show_cards(cards: Vec<&Flashcard>) {
     }
 }
 
+fn grade_answer(guess: &str, answer: &str) -> bool {
+    println!(
+        "{}Guess:{} {}",
+        color(SHADE, SHADE, 255),
+        color_reset(),
+        guess
+    );
+    println!(
+        "{}Answer:{} {}",
+        color(SHADE, SHADE, 255),
+        color_reset(),
+        answer
+    );
+    println!(
+        "{}Was it correct? (y/n){}",
+        color(SHADE, SHADE, 255),
+        color_reset()
+    );
+
+    let mut response = String::new();
+    std::io::stdin()
+        .read_line(&mut response)
+        .expect("Failed to read line");
+    response.trim() == "y"
+}
+
 fn main() {
     let cards_file = "/home/sam/.flashcard.cards";
 
