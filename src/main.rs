@@ -269,6 +269,17 @@ fn print_summary(filename: &str) {
     println!("Correct: {}", correct);
 }
 
+fn ask_how_many_cards() -> usize {
+    print!("{}Quiz length:{} ", color(SHADE, SHADE, 255), color_reset());
+    flush_stdout();
+
+    let mut response = String::new();
+    std::io::stdin()
+        .read_line(&mut response)
+        .expect("Failed to read line");
+    response.trim().parse().expect("Not a number")
+}
+
 fn main() {
     let cards_file = "/home/sam/.flashcard.cards";
 
