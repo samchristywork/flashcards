@@ -254,6 +254,21 @@ fn parse_lines(contents: String) -> Vec<LogEntry> {
     entries
 }
 
+fn count_correct(entries: Vec<LogEntry>) -> usize {
+    entries
+        .iter()
+        .filter(|entry| entry.result == "correct")
+        .count()
+}
+
+fn print_summary(filename: &str) {
+    let contents = read_file(filename);
+    let entries = parse_lines(contents);
+    let correct = count_correct(entries);
+
+    println!("Correct: {}", correct);
+}
+
 fn main() {
     let cards_file = "/home/sam/.flashcard.cards";
 
