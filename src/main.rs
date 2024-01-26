@@ -269,6 +269,15 @@ fn print_summary(filename: &str) {
     println!("Correct: {}", correct);
 }
 
+fn print_usage() {
+    println!("Usage: flashcard <command>");
+    println!("Commands:");
+    println!("  show");
+    println!("  quiz");
+    println!("  summary");
+    println!("  help");
+}
+
 fn ask_how_many_cards() -> usize {
     print!("{}Quiz length:{} ", color(SHADE, SHADE, 255), color_reset());
     flush_stdout();
@@ -282,7 +291,29 @@ fn ask_how_many_cards() -> usize {
 
 fn main() {
     let cards_file = "/home/sam/.flashcard.cards";
+    let log_file = "/home/sam/.flashcard.log";
+
+    let args: Vec<String> = std::env::args().collect();
+
+    if args.len() != 2 {
+        print_usage();
+        std::process::exit(1);
+    }
 
     let cards = read_card_file(cards_file);
     let cards: Vec<&Flashcard> = cards.iter().collect();
+
+    let command = &args[1];
+    if command == "show" {
+        show_cards(cards);
+    } else if command == "quiz" {
+        administer_quiz(cards, log_file);
+    } else if command == "summary" {
+        print_summary(log_file);
+    } else if command == "help" {
+        print_usage();
+    } else {
+        print_usage();
+        std::process::exit(1);
+    }
 }
