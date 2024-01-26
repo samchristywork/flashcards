@@ -229,6 +229,31 @@ fn administer_quiz(cards: Vec<&Flashcard>, filename: &str) {
     print_results(correct, incorrect);
 }
 
+fn read_file(filename: &str) -> String {
+    let mut file = File::open(filename).expect("Can't open file");
+    let mut contents = String::new();
+    file.read_to_string(&mut contents).expect("Can't read file");
+    contents
+}
+
+fn parse_lines(contents: String) -> Vec<LogEntry> {
+    let mut entries: Vec<LogEntry> = Vec::new();
+    for line in contents.lines() {
+        let mut fields = line.split('\t');
+        let entry = LogEntry {
+            date: strip_string(fields.next().unwrap().to_string()),
+            result: strip_string(fields.next().unwrap().to_string()),
+            card: Flashcard {
+                category: strip_string(fields.next().unwrap().to_string()),
+                front: strip_string(fields.next().unwrap().to_string()),
+                back: strip_string(fields.next().unwrap().to_string()),
+            },
+        };
+        entries.push(entry);
+    }
+    entries
+}
+
 fn main() {
     let cards_file = "/home/sam/.flashcard.cards";
 
