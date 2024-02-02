@@ -274,8 +274,13 @@ fn print_summary(filename: &str) {
     let correct = count_correct(&entries);
     let incorrect = entries.len() - correct;
 
-    println!("Correct: {}", correct);
-    println!("Incorrect: {}", incorrect);
+    println!("Total Entries: {}", entries.len());
+    println!("Correct: {} ({}%)", correct, correct * 100 / entries.len());
+    println!(
+        "Incorrect: {} ({}%)",
+        incorrect,
+        incorrect * 100 / entries.len()
+    );
     println!(
         "Last Quiz: {} ({} days)",
         entries.last().unwrap().date,
