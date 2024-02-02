@@ -261,6 +261,13 @@ fn count_correct(entries: &Vec<LogEntry>) -> usize {
         .count()
 }
 
+fn days_since_last_quiz(entries: &Vec<LogEntry>) -> i64 {
+    let last_date = &entries.last().unwrap().date;
+    let last_date = chrono::NaiveDate::parse_from_str(last_date, "%Y-%m-%d %H:%M:%S").unwrap();
+    let now = chrono::Local::now().naive_local().date();
+    (now - last_date).num_days()
+}
+
 fn print_summary(filename: &str) {
     let contents = read_file(filename);
     let entries = parse_lines(contents);
@@ -269,6 +276,11 @@ fn print_summary(filename: &str) {
 
     println!("Correct: {}", correct);
     println!("Incorrect: {}", incorrect);
+    println!(
+        "Last Quiz: {} ({} days)",
+        entries.last().unwrap().date,
+        days_since_last_quiz(&entries)
+    );
 }
 
 fn print_usage() {
