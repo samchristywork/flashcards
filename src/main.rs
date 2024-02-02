@@ -254,7 +254,7 @@ fn parse_lines(contents: String) -> Vec<LogEntry> {
     entries
 }
 
-fn count_correct(entries: Vec<LogEntry>) -> usize {
+fn count_correct(entries: &Vec<LogEntry>) -> usize {
     entries
         .iter()
         .filter(|entry| entry.result == "correct")
@@ -264,9 +264,11 @@ fn count_correct(entries: Vec<LogEntry>) -> usize {
 fn print_summary(filename: &str) {
     let contents = read_file(filename);
     let entries = parse_lines(contents);
-    let correct = count_correct(entries);
+    let correct = count_correct(&entries);
+    let incorrect = entries.len() - correct;
 
     println!("Correct: {}", correct);
+    println!("Incorrect: {}", incorrect);
 }
 
 fn print_usage() {
