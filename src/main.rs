@@ -126,6 +126,7 @@ fn grade_answer(guess: &str, answer: &str) -> bool {
         color_reset(),
         answer
     );
+    speak(answer);
     println!(
         "{}Was it correct? (y/n){}",
         color(SHADE, SHADE, 255),
@@ -181,8 +182,15 @@ fn mark_incorrect(card: &Flashcard, filename: &str) {
     append_to_file(filename, line);
 }
 
+fn speak(text: &str) {
+    let mut cmd = std::process::Command::new("espeak");
+    cmd.arg(text);
+    cmd.spawn().expect("Failed to speak");
+}
+
 fn display_flashcard(card: &Flashcard) {
     println!("{}: {}", card.category, card.front);
+    speak(&card.front);
 }
 
 fn get_guess() -> String {
