@@ -294,6 +294,7 @@ fn print_usage() {
     println!("  show");
     println!("  quiz");
     println!("  summary");
+    println!("  edit");
     println!("  help");
 }
 
@@ -329,6 +330,20 @@ fn main() {
         administer_quiz(cards, log_file);
     } else if command == "summary" {
         print_summary(log_file);
+    } else if command == "edit" {
+        match std::env::var("EDITOR") {
+            Ok(editor) => {
+                std::process::Command::new(editor)
+                    .arg(cards_file)
+                    .arg(log_file)
+                    .status()
+                    .expect("Failed to open editor");
+            }
+            Err(_) => {
+                println!("Please set the EDITOR environment variable");
+                std::process::exit(1);
+            }
+        }
     } else if command == "help" {
         print_usage();
     } else {
